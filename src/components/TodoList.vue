@@ -66,7 +66,7 @@ import axios from "axios";
 
 const todos = ref([]);
 const newTodo = ref("");
-const api = "http://82.66.162.121:3000/api/todos";
+const api = "http://82.66.162.121:3001/api/todos";
 let intervalId = null;
 
 const fetchTodos = async () => {
