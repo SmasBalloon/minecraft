@@ -8,7 +8,7 @@ const app = express();
 const PORT = 3001;
 
 // Middleware
-app.use(cors());
+app.use(cors()); // Autorise toutes les origines
 app.use(express.json());
 
 // Initialisation de la base de données
@@ -34,7 +34,6 @@ db.serialize(() => {
 app.get("/api/todos", (req, res) => {
   db.all("SELECT * FROM todos", [], (err, rows) => {
     if (err) return res.status(500).json({ error: err.message });
-    // Conversion des booléens
     res.json(
       rows.map((row) => ({
         ...row,
@@ -86,6 +85,7 @@ app.put("/api/todos/:id", (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`Backend Todo API sur http://localhost:${PORT}`);
+// Modifie ici pour écouter sur toutes les interfaces réseau (0.0.0.0)
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`Backend Todo API sur http://0.0.0.0:${PORT}`);
 });
