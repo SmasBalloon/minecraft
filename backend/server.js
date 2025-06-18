@@ -25,7 +25,8 @@ db.serialize(() => {
   db.run(`CREATE TABLE IF NOT EXISTS todos (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     text TEXT NOT NULL,
-    done INTEGER DEFAULT 0
+    done INTEGER DEFAULT 0,
+    inProgress INTEGER DEFAULT 0
   )`);
 });
 
@@ -33,7 +34,14 @@ db.serialize(() => {
 app.get("/api/todos", (req, res) => {
   db.all("SELECT * FROM todos", [], (err, rows) => {
     if (err) return res.status(500).json({ error: err.message });
-    res.json(rows);
+    // Conversion des booléens
+    res.json(
+      rows.map((row) => ({
+        ...row,
+        done: !!row.done,
+        inProgress: !!row.inProgress,
+      }))
+    );
   });
 });
 
@@ -42,7 +50,7 @@ app.post("/api/todos", (req, res) => {
   if (!text) return res.status(400).json({ error: "Texte requis" });
   db.run("INSERT INTO todos (text) VALUES (?)", [text], function (err) {
     if (err) return res.status(500).json({ error: err.message });
-    res.json({ id: this.lastID, text, done: 0 });
+    res.json({ id: this.lastID, text, done: 0, inProgress: 0 });
   });
 });
 
@@ -54,15 +62,28 @@ app.delete("/api/todos/:id", (req, res) => {
 });
 
 app.put("/api/todos/:id", (req, res) => {
-  const { done } = req.body;
-  db.run(
-    "UPDATE todos SET done = ? WHERE id = ?",
-    [done ? 1 : 0, req.params.id],
-    function (err) {
-      if (err) return res.status(500).json({ error: err.message });
-      res.json({ updated: this.changes });
-    }
-  );
+  const { done, inProgress } = req.body;
+  if (typeof inProgress !== "undefined") {
+    db.run(
+      "UPDATE todos SET inProgress = ? WHERE id = ?",
+      [inProgress ? 1 : 0, req.params.id],
+      function (err) {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json({ updated: this.changes });
+      }
+    );
+  } else if (typeof done !== "undefined") {
+    db.run(
+      "UPDATE todos SET done = ? WHERE id = ?",
+      [done ? 1 : 0, req.params.id],
+      function (err) {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json({ updated: this.changes });
+      }
+    );
+  } else {
+    res.status(400).json({ error: "Aucune donnée à mettre à jour" });
+  }
 });
 
 app.listen(PORT, () => {

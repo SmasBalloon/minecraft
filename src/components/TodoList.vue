@@ -29,16 +29,31 @@
         <span
           :class="{
             'line-through text-gray-400': todo.done,
-            'text-gray-800': !todo.done,
+            'text-yellow-500 font-semibold': todo.inProgress && !todo.done,
+            'text-gray-800': !todo.done && !todo.inProgress,
           }"
           class="flex-1"
-          >{{ todo.text }}</span
         >
+          {{ todo.text }}
+          <span v-if="todo.inProgress && !todo.done">(En cours...)</span>
+        </span>
         <button
           @click="deleteTodo(todo.id)"
           class="text-red-500 px-2 py-1 rounded hover:bg-red-100 transition"
         >
           Supprimer
+        </button>
+        <button
+          v-if="!todo.done"
+          @click="setInProgress(todo)"
+          :class="
+            todo.inProgress
+              ? 'text-gray-500 hover:bg-gray-100'
+              : 'text-yellow-500 hover:bg-yellow-100'
+          "
+          class="px-2 py-1 rounded transition"
+        >
+          {{ todo.inProgress ? "Pas en cours" : "En cours" }}
         </button>
       </li>
     </ul>
@@ -46,22 +61,28 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, onUnmounted } from "vue";
 import axios from "axios";
 
 const todos = ref([]);
 const newTodo = ref("");
-const api = "http://localhost:3001/api/todos";
+const api = "http://82.66.162.121:3000/api/todos";
+let intervalId = null;
 
 const fetchTodos = async () => {
   const res = await axios.get(api);
-  todos.value = res.data.map((t) => ({ ...t, done: !!t.done }));
+  todos.value = res.data.map((t) => ({
+    ...t,
+    done: !!t.done,
+    inProgress: !!t.inProgress,
+  }));
 };
 
 const addTodo = async () => {
   if (!newTodo.value.trim()) return;
   const res = await axios.post(api, { text: newTodo.value });
-  todos.value.push(res.data);
+  // On récupère l'état réel depuis le backend (qui doit renvoyer inProgress: 0)
+  todos.value.push({ ...res.data });
   newTodo.value = "";
 };
 
@@ -74,7 +95,18 @@ const toggleDone = async (todo) => {
   await axios.put(`${api}/${todo.id}`, { done: todo.done });
 };
 
-onMounted(fetchTodos);
+const setInProgress = async (todo) => {
+  await axios.put(`${api}/${todo.id}`, { inProgress: !todo.inProgress });
+  fetchTodos();
+};
+
+onMounted(() => {
+  fetchTodos();
+  intervalId = setInterval(fetchTodos, 5000); // refresh toutes les 5 secondes
+});
+onUnmounted(() => {
+  if (intervalId) clearInterval(intervalId);
+});
 </script>
 
-<!-- Plus de hover sur le li, le bouton reste visible -->
+<!-- Un seul bouton pour basculer le statut "en cours" -->
