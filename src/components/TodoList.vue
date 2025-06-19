@@ -1,6 +1,6 @@
 <template>
   <div class="todo-container">
-    <h2>Ma Todo List</h2>
+    <h2>Minecraft //TODO LIST</h2>
     <form @submit.prevent="addTodo">
       <input v-model="newTodo" type="text" placeholder="Ajouter une tâche..." />
       <button type="submit">Ajouter</button>
