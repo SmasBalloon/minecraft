@@ -8,7 +8,9 @@ const app = express();
 const PORT = 3001;
 
 // Middleware
-app.use(cors()); // Autorise toutes les origines
+app.use(cors({
+  origin: '*', // Autorise toutes les origines (à restreindre en prod si besoin)
+}));
 app.use(express.json());
 
 // Initialisation de la base de données
@@ -86,6 +88,6 @@ app.put("/api/todos/:id", (req, res) => {
 });
 
 // Modifie ici pour écouter sur toutes les interfaces réseau (0.0.0.0)
-app.listen(PORT, "0.0.0.0", () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`Backend Todo API sur http://0.0.0.0:${PORT}`);
 });
