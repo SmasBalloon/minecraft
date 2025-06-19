@@ -1,3 +1,107 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* Style classique pour la Todo List avec fond doux et non agressif */
+body {
+  background: linear-gradient(
+    120deg,
+    #f6d365 0%,
+    #fda085 100%
+  ); /* dégradé pastel doux */
+  min-height: 100vh;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  overflow-x: hidden;
+}
+.todo-container {
+  max-width: 400px;
+  margin: 2rem auto;
+  background: #fff8f0;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px #0001;
+  padding: 2rem;
+}
+.todo-container h2 {
+  color: #b9806e;
+}
+.todo-container form {
+  background: #ffe5d0;
+}
+.todo-container input[type="text"] {
+  flex: 1;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 0.5rem;
+  font-size: 1rem;
+}
+.todo-container button[type="submit"] {
+  background: #f6ad55;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.todo-container button[type="submit"]:hover {
+  background: #ed8936;
+}
+.todo-container ul {
+  background: #fff3e6;
+  list-style: none;
+  padding: 0;
+}
+.todo-container li {
+  background: #fff;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #f3f4f6;
+}
+.todo-container li:last-child {
+  border-bottom: none;
+}
+.todo-container input[type="checkbox"] {
+  accent-color: #2563eb;
+}
+.todo-container span {
+  flex: 1;
+  font-size: 1rem;
+}
+.todo-container .done span {
+  text-decoration: line-through;
+  color: #888;
+}
+.todo-container .in-progress span {
+  color: #eab308;
+  font-weight: bold;
+}
+.todo-container button.delete {
+  background: #f56565;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 0.2rem 0.6rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.2s;
+}
+.todo-container button.delete:hover {
+  background: #c53030;
+}
+.todo-container button.progress {
+  background: #ecc94b;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 0.2rem 0.6rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.2s;
+}
+.todo-container button.progress.in {
+  background: #a0aec0;
+}
+.todo-container button.progress:hover {
+  opacity: 0.8;
+}

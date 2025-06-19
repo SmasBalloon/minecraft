@@ -1,57 +1,29 @@
 <template>
-  <div class="max-w-md mx-auto mt-10 bg-white rounded-lg shadow-lg p-8">
-    <h2 class="text-2xl font-bold mb-6 text-center">Ma Todo List</h2>
-    <form @submit.prevent="addTodo" class="flex gap-2 mb-6">
-      <input
-        v-model="newTodo"
-        placeholder="Ajouter une tâche..."
-        class="flex-1 border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-      />
-      <button
-        type="submit"
-        class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"
-      >
-        Ajouter
-      </button>
+  <div class="todo-container">
+    <h2>Ma Todo List</h2>
+    <form @submit.prevent="addTodo">
+      <input v-model="newTodo" type="text" placeholder="Ajouter une tâche..." />
+      <button type="submit">Ajouter</button>
     </form>
     <ul>
       <li
         v-for="todo in todos"
         :key="todo.id"
-        class="flex items-center gap-2 mb-3 p-2 rounded"
+        :class="[
+          todo.done ? 'done' : '',
+          todo.inProgress && !todo.done ? 'in-progress' : '',
+        ]"
       >
-        <input
-          type="checkbox"
-          v-model="todo.done"
-          @change="toggleDone(todo)"
-          class="accent-blue-500"
-        />
-        <span
-          :class="{
-            'line-through text-gray-400': todo.done,
-            'text-yellow-500 font-semibold': todo.inProgress && !todo.done,
-            'text-gray-800': !todo.done && !todo.inProgress,
-          }"
-          class="flex-1"
-        >
+        <input type="checkbox" v-model="todo.done" @change="toggleDone(todo)" />
+        <span>
           {{ todo.text }}
           <span v-if="todo.inProgress && !todo.done">(En cours...)</span>
         </span>
-        <button
-          @click="deleteTodo(todo.id)"
-          class="text-red-500 px-2 py-1 rounded hover:bg-red-100 transition"
-        >
-          Supprimer
-        </button>
+        <button @click="deleteTodo(todo.id)" class="delete">Supprimer</button>
         <button
           v-if="!todo.done"
           @click="setInProgress(todo)"
-          :class="
-            todo.inProgress
-              ? 'text-gray-500 hover:bg-gray-100'
-              : 'text-yellow-500 hover:bg-yellow-100'
-          "
-          class="px-2 py-1 rounded transition"
+          :class="['progress', todo.inProgress ? 'in' : '']"
         >
           {{ todo.inProgress ? "Pas en cours" : "En cours" }}
         </button>
@@ -109,4 +81,4 @@ onUnmounted(() => {
 });
 </script>
 
-<!-- Un seul bouton pour basculer le statut "en cours" -->
+<!-- CSS classique, plus de classes Tailwind -->
